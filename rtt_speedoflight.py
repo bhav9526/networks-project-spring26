@@ -11,6 +11,10 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import urllib.request
 
+from matplotlib.lines import Line2D
+from matplotlib.artist import Artist
+
+
 # ─────────────────────────────────────────────
 # CONFIG
 # ─────────────────────────────────────────────
@@ -24,6 +28,16 @@ TARGETS = {
     "Mumbai":       {"url": "http://www.google.co.in",   "coords": (19.0760,   72.8777), "continent": "Asia"},
     "London":       {"url": "http://www.google.co.uk",   "coords": (51.5074,   -0.1278), "continent": "Europe"},
     "Singapore":    {"url": "http://www.google.com.sg",  "coords": (1.3521,   103.8198), "continent": "Asia"},
+    "Sendai":	    {"url": "http://www.tohoku.ac.jp",   "coords": (38.2432, 140.8730),"continent": "Asia"},
+    "Seoul":        {"url": "http://www.snu.ac.kr",      "coords": (37.4600, 126.9500),"continent": "Asia"},
+    "New Delhi":    {"url":"http://www.iitd.ac.in",      "coords":(28.545718, 77.1927679),"continent":"Asia"},
+    "Santiago": 	{"url":"http://www.uchile.cl",       "coords":(-33.4400, -70.6506),"continent":"S. America"},
+    "Johannesburg": {"url":"http://www.wits.ac.za",      "coords":(-26.1878, 28.0248), "continent": "Africa"},
+    "Berlin":       {"url":"http://www.fu-berlin.de",    "coords":(52.4518, 13.2877),"continent": "Europe" },
+    "London":       {"url":"http://www.imperial.ac.uk",  "coords":(51.498356,-0.176894),"continent": "Europe" },
+    "Canberra":     {"url":"http://www.anu.edu.au",      "coords": (-35.2764, 149.1205),"continent":"Australia"}
+
+
 }
 
 PROBES           = 15
@@ -145,7 +159,7 @@ def compute_inefficiency(results: dict, src_lat: float, src_lon: float) -> dict:
     for city, data in results.items():
         # TODO
         dlat,dlon = data["coords"]
-        distance_km = great_circle_km(sourcelat, sourcelon, destinationlat, destionationlon)
+        distance_km = great_circle_km(src_lat, src_lon, dlat, dlon)
         theoretical_min_ms = 2 * (distance_km / FIBER_SPEED_KM_S) * 1000
 
         data["distance_km"] = distance_km
@@ -199,13 +213,14 @@ def make_plots(results: dict):
     # ── Figure 1 ──────────────────────────────
     fig, ax = plt.subplots(figsize=(11, 6))
     # TODO
-    x = range(len(cities))
+    x = np.arange(len(cities))
+    width = 0.38
     
     measured = [valid[c]["median_ms"] for c in cities]
     theoretical = [valid[c]["theoretical_min_ms"] for c in cities]
 
-    ax.bar(x-width/2,measured,width = width, label = " measured median rtt")
-    ax.bar(x+width/2,theoretical,width = width, label = " theretcical median rtt")
+    ax.bar(x -width / 2,measured,width = width, label = " measured median rtt")
+    ax.bar(x + width / 2,theoretical,width = width, label = " theretcical median rtt")
 
     ax.set_xticks(x)
     ax.set_xticklabels(cities, rotation=45, ha="right")
@@ -232,7 +247,7 @@ def make_plots(results: dict):
         continent = d["continent"]
         color = CONTINENT_COLORS.get(continent, "gray")
         ax.scatter(d["distance_km"], d["median_ms"], color=color, s=100)
-        ax.annotate(city, (d["distance_km"], d["median_ms"]), fontsize=11, textcoords="points", xytext=(5, 5))
+        ax.annotate(city, (d["distance_km"], d["median_ms"]), fontsize=11, textcoords="offset points", xytext=(5, 5))
 
     sorted_pairs = sorted(
         [(valid[c]["distance_km"], valid[c]["theoretical_min_ms"]) for c in cities],
@@ -248,11 +263,11 @@ def make_plots(results: dict):
     ax.set_ylabel("measured RTT")
     ax.set_title("rtt vs distance by city")
 
-    legend_handles:list[Artsist] = [
-        mpatches.Patch(color = color, label = continent) for continent, color in CONTINENT_COLORS.items
+    legend_handles:list[Artist] = [
+        mpatches.Patch(color = color, label = continent) for continent, color in CONTINENT_COLORS.items()
     ]
     legend_handles.append(Line2D([0], [0],color = "black", label = "theretcial min" ))
-    ax.legend(handles = legend_handles, loc ="upperleft")
+    ax.legend(handles = legend_handles, loc ="upper left")
 
     plt.tight_layout()
     plt.savefig(f"{FIGURES_DIR}/fig2_distance_scatter.png", dpi=150, bbox_inches="tight")
