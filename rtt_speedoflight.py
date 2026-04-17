@@ -211,7 +211,7 @@ def make_plots(results: dict):
     cities = sorted(valid, key=lambda c: valid[c]["distance_km"])
 
     # ── Figure 1 ──────────────────────────────
-    fig, ax = plt.subplots(figsize=(11, 6))
+    fig, ax = plt.subplots(figsize=(13, 8))
     # TODO
     x = np.arange(len(cities))
     width = 0.38
@@ -219,15 +219,14 @@ def make_plots(results: dict):
     measured = [valid[c]["median_ms"] for c in cities]
     theoretical = [valid[c]["theoretical_min_ms"] for c in cities]
 
-    ax.bar(x -width / 2,measured,width = width, label = " measured median rtt")
-    ax.bar(x + width / 2,theoretical,width = width, label = " theretcical median rtt")
+    ax.bar(x -width / 2,measured,width = width, label = " measured median rtt", color = "red")
+    ax.bar(x + width / 2,theoretical,width = width, label = " theretcical median rtt", color = "purple")
 
     ax.set_xticks(x)
     ax.set_xticklabels(cities, rotation=45, ha="right")
-    ax.set_xlabel("city")
-    ax.set_ylabel(" rtt")
-    ax.set_title("measured vs theoretical min RTT")
-    ax.legend()
+    ax.set_xlabel("city", fontsize=12)
+    ax.set_ylabel("rtt", fontsize=12)
+    ax.set_title("measured vs theoretical min RTT", fontsize=14)
 
 
     plt.tight_layout()
@@ -245,8 +244,8 @@ def make_plots(results: dict):
     for city in cities:
         d = valid[city]
         continent = d["continent"]
-        color = CONTINENT_COLORS.get(continent, "gray")
-        ax.scatter(d["distance_km"], d["median_ms"], color=color, s=100)
+        color = CONTINENT_COLORS.get(continent, "blue")
+        ax.scatter(d["distance_km"], d["median_ms"], color="pink", s=200, edgecolor = "black")
         ax.annotate(city, (d["distance_km"], d["median_ms"]), fontsize=11, textcoords="offset points", xytext=(5, 5))
 
     sorted_pairs = sorted(
@@ -256,18 +255,12 @@ def make_plots(results: dict):
     xline = [p[0] for p in sorted_pairs]
     yline = [p[1] for p in sorted_pairs]
 
-    ax.plot(xline,yline,linestyle = '--', color = "black", label = "theretcial min")
+    ax.plot(xline,yline,linestyle = '--', color = "red", label = "theretcial min")
 
 
     ax.set_xlabel("distance")
     ax.set_ylabel("measured RTT")
     ax.set_title("rtt vs distance by city")
-
-    legend_handles:list[Artist] = [
-        mpatches.Patch(color = color, label = continent) for continent, color in CONTINENT_COLORS.items()
-    ]
-    legend_handles.append(Line2D([0], [0],color = "black", label = "theretcial min" ))
-    ax.legend(handles = legend_handles, loc ="upper left")
 
     plt.tight_layout()
     plt.savefig(f"{FIGURES_DIR}/fig2_distance_scatter.png", dpi=150, bbox_inches="tight")
