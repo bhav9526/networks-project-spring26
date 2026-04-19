@@ -9,4 +9,4 @@ Answer three questions:
 
 3. Your packet to Lagos almost certainly routes through Europe first. Why does Africa route through Europe, and what would need to change to fix it?
 
-# Since many African Countires where previous european colonies, many of the cables and wires made route back to europe. To change this we could install more interconnected landwires to balance the amount of submarine wires and connect cross continent.
+# Since many African Countires where previous european colonies, many of the cables and wires made route back to europe. To change this we could install more interconnected landwires to balance the amount of submarine wires and connect cross continent. 
