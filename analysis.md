@@ -5,7 +5,8 @@ Answer three questions:
 
 2. Which city is closest to the theoretical minimum? What does that tell you about routing infrastructure there?
 
-# Tokyo, Japan is the closest to the theoretical min. This is because the city has a very dense physical set of networks spanning across the city. Having shyical networks makes rounting more effcient. They also are the location for many trans atlantic networks.
+# According to my data, the place is closest to the theoretical min, with a ratio of .86 is Frankfurt Germany. After some research, I found that Frankfurt has DE-CIX, the world’s leading IXP.So many international cables meet in Frankfurt, data doesn't have to bounce around between different cities to find a path. 
+
 3. Your packet to Lagos almost certainly routes through Europe first. Why does Africa route through Europe, and what would need to change to fix it?
 
 # Since many African Countires where previous european colonies, many of the cables and wires made route back to europe. To change this we could install more interconnected landwires to balance the amount of submarine wires and connect cross continent.
